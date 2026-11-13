@@ -2,17 +2,36 @@
 Autores: Alexander Santibañez - Oliver Bustamante
 
 ## ¿Cómo poner en marcha el modelo?
-- La base de entrenamiento quedo linkeada desde github al modelo para cargarse automaticamente, sin embargo, será necesario cargar la información en tiempo real a la base ya sea cargando la base bruta actualizada y pasandola por el codigo "Limpiador_base" o cargando las variables que se utilizan
-- En un cuaderno colab sera necesario ejecutar ```pip install arch -q ``` en la terminal.
+- La base de entrenamiento quedo linkeada desde github al modelo para cargarse automaticamente, sin embargo, será necesario cargar la información en tiempo real a la base ya sea cargando la base bruta actualizada y pasandola por el codigo "Limpiador_base" o cargando las variables que se utilizan.
 - Ejecutado el modelo, automaticamente entregará una prediccion para mañana según los últimos datos cargados. Es decir, antes de la apertura o luego del cierre de EE.UU. puede ser actualizada la base para obtener una prediccion para el día siguiente.
 
-### Orden de ejecución
-1. Subir la base bruta de Bloomberg con el nombre `base_usdclp_actualizada.xlsx` (hoja `Días hábiles`) a la misma carpeta del cuaderno.
-2. Ejecutar `Limpiador_base.ipynb` (requiere ```pip install holidays -q```). Este cuaderno aplica todo el tratamiento descrito abajo y genera `base_modelo.xlsx` con las hojas `datos`, `auxiliares` y `precios`. Verificamos que la base que genera es idéntica, celda por celda, a la que usamos para entrenar y evaluar el modelo.
-3. Ejecutar `Trading_code_v5_politica.ipynb` de principio a fin (unos 30 segundos). La última celda entrega la señal para la próxima apertura.
+### Pasos de ejecución
+1. Subir la base bruta actualizada con el nombre `base_usdclp_actualizada.xlsx` (hoja `Días hábiles`) a la misma carpeta del cuaderno.
+2. Ejecutar `Limpiador_base.ipynb` (requiere ```pip install holidays -q```). Este cuaderno aplica todo el tratamiento descrito abajo y genera `base_modelo.xlsx` con las hojas `datos`, `auxiliares` y `precios`.
+3. Ejecutar `Codigo_final.ipynb` de principio a fin (unos 30 segundos). La penúltima celda (la H) entrega la señal para la próxima apertura.
 
 ## Nuestra estrategia
-Este modelo opera a la apertura, con el precio de apertura. La intuición que impregnamos en el modelo es realizar una apuesta fuerte (-3, +3) cando la señal es fuerte, y cuando no, mantener una actividad moderada con montos acotados (-1,+1).
+Este modelo opera a la apertura, con el precio de apertura. La intuición que impregnamos en el modelo es realizar una apuesta fuerte (-3, +3) cando la señal es fuerte, y cuando no, mantener una actividad moderada con montos acotados (-1,+1). 
+
+Además decidimos no tomar decisiones todos los días, sino día por medio, porque en validation esto redujo la rotación y los costos sin perder la señal. Por lo que nostros entendimos el modelo no entrega órdenes de compra o venta, sino la **exposición que se debe tener** durante la jornada; cada día de decisión se compara esa exposición con la que ya se tiene y se transa solo la diferencia. Entonces, si el día 1 se abre una posición, el día 2 no se transa y la posición sigue abierta, ganando o perdiendo con el movimiento del dólar. El día 3 es un nuevo día de decisión y el modelo vuelve a indicar una exposición y se ajusta la posición hacia ella.
+
+Aqui dejamos una tabla para comprender mejor como funciona desde nuestra perspectiva:
+| Día | Qué indica el modelo | Exposición que se tenía | Qué se hace en la apertura | Unidades transadas |
+|---|---|---|---|---|
+| 1 | Día de decisión: +1 | 0 | Se compra 1 unidad de USD | 1 |
+| 2 | No transar, se mantiene +1 | +1 | Nada, la posición sigue abierta | 0 |
+| 3 | Día de decisión: nueva exposición | +1 | Se ajusta según la tabla siguiente | Según el caso |
+
+Lo que se hace el día 3 depende de la nueva exposición que indique el modelo:
+
+| Si el día 3 indica | Qué se hace | Unidades transadas |
+|---|---|---|
+| +1 | Nada: se sigue comprado | 0 |
+| +3 | Se compran 2 unidades más | 2 |
+| 0 | Se vende 1: se cierra la posición y se queda en pesos | 1 |
+| −1 | Se venden 2: se cierra el largo y se abre 1 corto | 2 |
+| −3 | Se venden 4: se cierra el largo y se abren 3 cortos | 4 |
+
 
 ## Tratamiento de los datos
 Para construir una base de datos limpia, sin data leakage y consistente con los datos entregados, ejecutamos las siguientes acciones junto a su respectivo fundamento:
