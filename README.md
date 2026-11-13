@@ -33,6 +33,8 @@ Lo que se hace el día 3 depende de la nueva exposición que indique el modelo:
 | −1 | Se venden 2: se cierra el largo y se abre 1 corto | 2 |
 | −3 | Se venden 4: se cierra el largo y se abren 3 cortos | 4 |
 
+## Uso de IA  
+Usamos IA principalmente para la construcción del código, realizar simulaciones y ayudarnos a comprender conceptos. Utilizamos la combinación de Gemini-Chatgpt-Claude para lograr las mejores respuestas. Sin embargo, nos dimos cuenta que la IA es muy poco creativa y nos inducía a escenarios no optimistas; los cuales hicimos caso omiso. Las decisiones de construcción del modelo, tratamiento de las variables, insumos de las variables, politica de inversión y demás decisiones importantes nacieron enteramente de nosotros, y mediante este trabajo comprobamos que nuestra creatividad fue clave; superando a la IA en ese aspecto y mostrándole que habían cosas que eran posibles mientras ella decía que no. Por lo que nuestro criterio fue fundamental en este trabajo y lograr un resultado pensando "fuera de la caja", y la IA nos ayudó a plasmar eso en código.
 
 ## Tratamiento de los datos
 Para construir una base de datos limpia, sin data leakage y consistente con los datos entregados, ejecutamos las siguientes acciones junto a su respectivo fundamento:
