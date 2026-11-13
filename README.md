@@ -7,8 +7,9 @@ Autores: Alexander Santibañez - Oliver Bustamante
 
 ### Pasos de ejecución
 1. Subir la base bruta actualizada con el nombre `base_usdclp_actualizada.xlsx` (hoja `Días hábiles`) a la misma carpeta del cuaderno.
-2. Ejecutar `Limpiador_base.ipynb` (requiere ```pip install holidays -q```). Este cuaderno aplica todo el tratamiento descrito abajo y genera `base_modelo.xlsx` con las hojas `datos`, `auxiliares` y `precios`.
+2. Ejecutar `Limpiador_base.ipynb` (requiere ```pip install holidays -q```). Este cuaderno aplica todo el tratamiento descrito abajo y genera `base_modelo.xlsx` con las hojas `datos`, `auxiliares` y `precios`. Esto dara como output `base_modelo.xlsx` que hay cargar al repo reemplazando el antiguo. 
 3. Ejecutar `Codigo_final.ipynb` de principio a fin (unos 30 segundos). La penúltima celda (la H) entrega la señal para la próxima apertura.
+Nos disculpamos por lo tedioso pero así están todos los pasos que hicimos, creemos que lo mejor es que el evaluador haga una copia del repo y cambie las urls usadas en los códigos a los archivos linkeados en el repo copia con el usuario del evaluador. Así el único paso manual es el 2.
 
 ## Nuestra estrategia
 Este modelo opera a la apertura, con el precio de apertura. La intuición que impregnamos en el modelo es realizar una apuesta fuerte (-3, +3) cando la señal es fuerte, y cuando no, mantener una actividad moderada con montos acotados (-1,+1). 
